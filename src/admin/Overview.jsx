@@ -131,7 +131,7 @@ export default function Overview() {
                 className="flex items-center gap-3 px-5 py-3.5 border-b border-white/5 last:border-b-0 hover:bg-white/[0.02]"
               >
                 <img
-                  src={b.service_image}
+                  src={b.image}
                   alt=""
                   className="h-12 w-12 rounded-lg object-cover ring-1 ring-white/10"
                 />

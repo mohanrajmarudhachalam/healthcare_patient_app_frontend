@@ -75,9 +75,51 @@ function FieldError({ msg }) {
   );
 }
 
+/* ─── extract a readable string from a backend error response ──── */
+function extractErrorMessage(e) {
+  const data = e?.response?.data;
+  if (!data) return e?.message || 'Please try again.';
+
+  // FastAPI-style: { detail: "some string" }
+  if (typeof data.detail === 'string') {
+    return data.detail;
+  }
+
+  // FastAPI validation errors: { detail: [{ type, loc, msg, input, url }, ...] }
+  if (Array.isArray(data.detail)) {
+    return data.detail
+      .map((d) => {
+        if (typeof d === 'string') return d;
+        if (d?.msg) {
+          const field = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : d.loc;
+          return field ? `${field}: ${d.msg}` : d.msg;
+        }
+        return JSON.stringify(d);
+      })
+      .join(', ');
+  }
+
+  // Express-validator style: [{ msg: '...' }, ...]
+  if (Array.isArray(data)) {
+    return data.map((d) => (typeof d === 'string' ? d : d?.msg || JSON.stringify(d))).join(', ');
+  }
+
+  // { message: "..." }
+  if (typeof data.message === 'string') {
+    return data.message;
+  }
+
+  if (typeof data === 'string') {
+    return data;
+  }
+
+  return 'Please try again.';
+}
+
 /* ═══════════════════════════════════════════════════════════════ */
 export default function BookingDialog({ service, open, onOpenChange }) {
   const [step, setStep]           = useState(1);
+  const[image, setImage]          = useState(service?.image || '');
   const [date, setDate]           = useState(iso(new Date()));
   const [slot, setSlot]           = useState(TIME_SLOTS[1]);
   const [name, setName]           = useState('');
@@ -87,6 +129,7 @@ export default function BookingDialog({ service, open, onOpenChange }) {
   const [notes, setNotes]         = useState('');
   const [address, setAddress]     = useState('');
   const [city, setCity]           = useState('');
+  const [Price, setPrice]         = useState(service?.price || 0);
   const [payMethod, setPayMethod] = useState('upi');
   const [errors, setErrors]       = useState({});
   const [done, setDone]           = useState(false);
@@ -101,6 +144,8 @@ export default function BookingDialog({ service, open, onOpenChange }) {
       setName(getStoredName());
       setPhone(getStoredPhone());
       setAddress(getStoredAddress());
+      setImage(service?.image || '');
+      setPrice(service?.price || 0);
     }
   }, [open]);
 
@@ -162,21 +207,29 @@ export default function BookingDialog({ service, open, onOpenChange }) {
     try {
       await createBooking({
         service_id: service.id,
+        image,
         date,
         slot,
         name,
         phone,
         address,
         city,
-        age,
+        age: age,
         gender,
         notes,
+        Price,
         pay_method: payMethod,
       });
       setIdentity({ name, phone, address });
       setDone(true);
     } catch (e) {
-      toast({ title: 'Could not create booking', description: e?.response?.data?.detail || 'Please try again.' });
+      // Log the raw response so you can see exactly what the backend sent back
+      console.log('Booking error response:', e?.response?.data);
+      toast({
+        title: 'Could not create booking',
+        description: extractErrorMessage(e),
+        variant: 'destructive',
+      });
     } finally {
       setBusy(false);
     }
@@ -432,6 +485,7 @@ export default function BookingDialog({ service, open, onOpenChange }) {
                       {days.map((d, i) => {
                         const v = iso(d);
                         const active = v === date;
+
                         return (
                           <button
                             key={v}

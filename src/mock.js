@@ -4,10 +4,10 @@ export const SERVICES = [
   {
     id: 'gp',
     title: 'General Physician',
-    subtitle: 'MBBS doctor at your doorstep',
+    subtitle: 'MBBS doctor at your doorstep system',
     price: 999,
     duration: '30 min',
-    rating: 4.9,
+    rating: 4.5,
     image:
       'https://images.pexels.com/photos/7653119/pexels-photo-7653119.jpeg?auto=compress&cs=tinysrgb&w=1200',
     icon: 'Stethoscope',

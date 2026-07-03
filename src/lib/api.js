@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const BACKEND_URL = 'https://healthcare-backend-nwld.onrender.com';
+const BACKEND_URL = 'http://localhost:5000';
+//const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://healthcare-backend-3yc2.onrender.com';
 export const API = `${BACKEND_URL}/api`;
 
 const PHONE_KEY = 'aevum.phone';
@@ -28,6 +28,8 @@ export const clearIdentity = () => {
 /* ---------- Public ---------- */
 export const fetchServices = async () => {
   const { data } = await axios.get(`${API}/services`);
+  console.log(JSON.stringify(data));
+  
   return data;
 };
 

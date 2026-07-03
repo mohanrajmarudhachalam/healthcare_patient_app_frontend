@@ -42,7 +42,20 @@ export default function BookingsPage() {
     }
     setLoading(true);
     try {
-      setItems(await fetchMyBookings(p));
+      const raw = await fetchMyBookings(p);
+      const mapped = raw.map((b) => ({
+        id: b._id,
+        service_title: b.service_title || b.service_id,
+        service_image: b.service_image || b.image,
+        date: b.date,
+        slot: b.slot,
+        address: b.address,
+        phone: b.phone,
+        price: b.price ?? b.Price,
+        // your API doesn't send a status field yet — default to 'confirmed'
+        status: b.status || 'confirmed',
+      }));
+      setItems(mapped);
     } catch {
       toast({ title: 'Could not load bookings' });
     } finally {
@@ -167,7 +180,7 @@ export default function BookingsPage() {
                     <span className="text-[16px] font-extrabold text-emerald-300">
                       ₹{b.price}
                     </span>
-                    {b.status === 'confirmed' && (
+                    {(b.status === 'pending' || b.status === 'confirmed') && (
                       <button
                         onClick={() => onCancel(b.id)}
                         className="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-zinc-400 hover:text-rose-400 transition-colors"
@@ -197,6 +210,7 @@ function Row({ icon: Icon, children }) {
 
 function StatusPill({ status }) {
   const map = {
+    pending: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     confirmed: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     completed: 'bg-sky-500/15 text-sky-300 border-sky-500/30',
     cancelled: 'bg-rose-500/10 text-rose-300 border-rose-500/30',
