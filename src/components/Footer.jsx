@@ -39,7 +39,7 @@ export default function Footer() {
               <Plus size={18} className="text-emerald-400" strokeWidth={3} />
             </span>
             <span className="text-[15px] font-extrabold tracking-tight">
-              Aevum <span className="text-emerald-400">Health</span>
+              VOYIL
             </span>
           </div>
           <p className="mt-4 text-[14px] text-zinc-400 max-w-sm leading-relaxed">
@@ -85,7 +85,7 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-5 lg:px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-zinc-500">
-            © {new Date().getFullYear()} Aevum Health. All rights reserved.
+            © {new Date().getFullYear()} Voyil. All rights reserved.
           </p>
           <p className="text-[12px] text-zinc-500">
             Built with care · 24×7 concierge available

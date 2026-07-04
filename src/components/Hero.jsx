@@ -24,7 +24,7 @@ export default function Hero({ onPrimary }) {
           </h1>
 
           <p className="mt-5 max-w-[520px] text-[15px] md:text-[17px] leading-relaxed text-zinc-300">
-            Aevum Health brings doctors, nurses, physios and lab pros straight
+            Voyil brings doctors, nurses, physios and lab pros straight
             to your living room. No more queues, no commute, no surprises
             — just careful, on-time, on-budget care.
           </p>

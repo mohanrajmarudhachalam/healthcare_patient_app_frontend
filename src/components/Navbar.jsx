@@ -18,8 +18,8 @@ export default function Navbar() {
           <span className="h-9 w-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center group-hover:bg-emerald-500/25 transition-colors">
             <Plus size={18} className="text-emerald-400" strokeWidth={3} />
           </span>
-          <span className="text-[15px] font-extrabold tracking-tight text-zinc-50">
-            Aevum <span className="text-emerald-400">Health</span>
+          <span className="text-[18px] font-extrabold tracking-tight text-zinc-50">
+           VOYIL {/*<span className="text-emerald-400">Health</span> */}
           </span>
         </Link>
 

@@ -102,7 +102,7 @@ export const TIME_SLOTS = [
 
 export const CONTACT = {
   phone: '+91 98400 12264',
-  brand: 'Aevum Health',
+  brand: 'VOYIL',
   tagline: '24×7 Available',
 };
 

@@ -80,7 +80,7 @@ export default function Overview() {
             Good to see you, <span className="font-display italic text-emerald-400">admin.</span>
           </h1>
           <p className="mt-1 text-[14px] text-zinc-400">
-            Here’s what’s happening across Aevum Health today.
+            Here’s what’s happening across VOYIL today.
           </p>
         </div>
         <Link
