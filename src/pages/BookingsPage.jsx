@@ -14,6 +14,7 @@ import {
   fetchMyBookings,
   cancelMyBooking,
   getStoredPhone,
+  getStoredUserId
 } from '../lib/api';
 import { useToast } from '../hooks/use-toast';
 import { Button } from '../components/ui/button';
@@ -29,6 +30,7 @@ export default function BookingsPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [phone, setPhone] = useState(getStoredPhone());
+  const [userid, setUserid] = useState(getStoredUserId());
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -36,14 +38,19 @@ export default function BookingsPage() {
   const reload = useCallback(async () => {
     const p = getStoredPhone();
     setPhone(p);
+    setUserid(getStoredUserId());
+    console.log('USER ID :',userid);
+    
     if (!p) {
       setItems([]);
       return;
     }
     setLoading(true);
     try {
-      const raw = await fetchMyBookings(p);
-      const mapped = raw.map((b) => ({
+
+      const raw = await fetchMyBookings(userid);
+      console.log('Raw Bookings:', raw);
+      const mapped = raw.data.map((b) => ({
         id: b._id,
         service_title: b.service_title || b.service_id,
         service_image: b.service_image || b.image,
@@ -56,8 +63,10 @@ export default function BookingsPage() {
         status: b.status || 'confirmed',
       }));
       setItems(mapped);
-    } catch {
-      toast({ title: 'Could not load bookings' });
+    } catch(err) {
+      console.log('ERROR ',err);
+      
+      toast({ title: 'Could not load bookings' ,err });
     } finally {
       setLoading(false);
     }

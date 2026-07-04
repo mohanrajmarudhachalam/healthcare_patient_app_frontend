@@ -16,7 +16,7 @@ import {
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Button } from '../components/ui/button';
-import { getStoredPhone, getStoredName, setIdentity, clearIdentity } from '../lib/api';
+import { getStoredPhone, getStoredName, setIdentity, clearIdentity, signIn as apiSignIn } from '../lib/api';
 import { useToast } from '../hooks/use-toast';
 import { CONTACT } from '../mock';
 
@@ -33,6 +33,7 @@ export default function ProfilePage() {
   const [password, setPassword] = useState('');
   const [phoneIn, setPhoneIn] = useState('');
   const [mode, setMode] = useState('signin');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fn = () => setU(buildUser());
@@ -40,18 +41,19 @@ export default function ProfilePage() {
     return () => window.removeEventListener('aevum:identity-changed', fn);
   }, []);
 
-  const signIn = () => {
+  const signIn = async () => {
     if (!email || !password) {
       toast({ title: 'Please enter email and password.' });
       return;
     }
-    const n = email.split('@')[0].replace(/\W/g, ' ').trim();
-    setIdentity({
-      name: n ? n.charAt(0).toUpperCase() + n.slice(1) : 'Member',
-      phone: phoneIn || '0000000000',
-    });
-    toast({ title: 'Welcome back!' });
+
+    setLoading(true);
+    const result = await apiSignIn({ email, password });
+    setLoading(false);
+
+    toast({ title: result.message });
   };
+
   const google = () => {
     setIdentity({ name: 'Aevum Member', phone: phoneIn || '0000000000' });
     toast({ title: 'Signed in (demo).' });
@@ -196,9 +198,14 @@ export default function ProfilePage() {
 
               <Button
                 onClick={signIn}
-                className="w-full h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-[#0a1411] font-bold text-[15px]"
+                disabled={loading}
+                className="w-full h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-[#0a1411] font-bold text-[15px] disabled:opacity-60"
               >
-                {mode === 'signin' ? 'Sign in' : 'Create account'}
+                {loading
+                  ? 'Signing in…'
+                  : mode === 'signin'
+                  ? 'Sign in'
+                  : 'Create account'}
               </Button>
               <p className="text-center text-[13px] text-zinc-400">
                 {mode === 'signin' ? "Don\u2019t have an account?" : 'Already a member?'}{' '}

@@ -37,6 +37,7 @@ import {
   getStoredPhone,
   getStoredName,
   getStoredAddress,
+  getStoredUserId
 } from '../lib/api';
 import { useToast } from '../hooks/use-toast';
 
@@ -123,6 +124,7 @@ export default function BookingDialog({ service, open, onOpenChange }) {
   const [date, setDate]           = useState(iso(new Date()));
   const [slot, setSlot]           = useState(TIME_SLOTS[1]);
   const [name, setName]           = useState('');
+  const [userid, setUserid]       = useState('');
   const [phone, setPhone]         = useState('');
   const [age, setAge]             = useState('');
   const [gender, setGender]       = useState('Male');
@@ -144,6 +146,7 @@ export default function BookingDialog({ service, open, onOpenChange }) {
       setName(getStoredName());
       setPhone(getStoredPhone());
       setAddress(getStoredAddress());
+      setUserid(getStoredUserId());
       setImage(service?.image || '');
       setPrice(service?.price || 0);
     }
@@ -152,6 +155,9 @@ export default function BookingDialog({ service, open, onOpenChange }) {
   if (!service) return null;
   const days = nextDays(7);
   const progress = `${(step / 4) * 100}%`;
+
+  console.log(userid);
+  
 
   /* ── clear a single error when user edits that field ─────────── */
   const clearErr = (key) => setErrors((prev) => ({ ...prev, [key]: undefined }));
@@ -202,10 +208,11 @@ export default function BookingDialog({ service, open, onOpenChange }) {
       toast({ title: 'Almost there', description: 'Please complete all required fields before confirming.' });
       return;
     }
-
+console.log("Stored UserId:", userid);
     setBusy(true);
     try {
       await createBooking({
+        userId: userid,
         service_id: service.id,
         image,
         date,
